@@ -42,7 +42,7 @@ def get_saved_user_agents():
 
 def get_latest_user_agents():
     user_agents = []
-    base_url = 'https://www.whatismybrowser.com/guides/the-latest-user-agent/'
+    base_url = 'https://webcache.googleusercontent.com/search?q=cache:https://www.whatismybrowser.com/guides/the-latest-user-agent/'
 
     for browser in ('chrome', 'firefox', 'safari', 'edge'):
         time.sleep(1)
