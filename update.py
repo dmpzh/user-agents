@@ -42,12 +42,12 @@ def get_saved_user_agents():
 
 def get_latest_user_agents():
     user_agents = []
-    base_url = 'https://webcache.googleusercontent.com/search?q=cache:https://www.whatismybrowser.com/guides/the-latest-user-agent/'
+    base_url = 'https://www-whatismybrowser-com.translate.goog/guides/the-latest-user-agent/{browser}?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=sc'
 
     for browser in ('chrome', 'firefox', 'safari', 'edge'):
         time.sleep(1)
         response = requests.get(
-            ''.join((base_url, browser)),
+            ''.join((base_url.format(browser = browser), browser)),
             headers={'User-Agent': random.choice(get_saved_user_agents())},
         )
         if response.status_code >= 400:
