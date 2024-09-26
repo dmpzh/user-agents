@@ -42,7 +42,7 @@ def get_saved_user_agents():
 
 def get_latest_user_agents():
     user_agents = []
-    base_url = 'https://translate.google.com/website?sl=en&tl=es&hl=es&u=https://www.whatismybrowser.com/guides/the-latest-user-agent/{browser}'
+    base_url = 'https://translate.yandex.com/translate?view=compact&url=https://www.whatismybrowser.com/guides/the-latest-user-agent/{browser}&lang=en-ru'
 
     for browser in ('chrome', 'firefox', 'safari', 'edge'):
         time.sleep(1)
