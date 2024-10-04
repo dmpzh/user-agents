@@ -42,7 +42,7 @@ def get_saved_user_agents():
 
 def get_latest_user_agents():
     user_agents = []
-    base_url = 'https://webproxy.lumiproxy.com/request?u=https://www.whatismybrowser.com/guides/the-latest-user-agent/{browser}'
+    base_url = 'https://webproxy.lumiproxy.com/request?area=KR&u=https://www.whatismybrowser.com/guides/the-latest-user-agent/{browser}'
 
     for browser in ('chrome', 'firefox', 'safari', 'edge'):
         time.sleep(1)
