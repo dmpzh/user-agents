@@ -51,6 +51,7 @@ def get_latest_user_agents():
             headers={'User-Agent': random.choice(get_saved_user_agents())},
         )
         if response.status_code >= 400:
+            print('error for {base_url}:')
             print(response.text)
             response.raise_for_status()
 
