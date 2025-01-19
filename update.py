@@ -40,41 +40,57 @@ def get_saved_user_agents():
     return _saved_user_agents
 
 
-def get_latest_user_agents():
+def get_latest_user_agents(retries=3, delay=2):
     user_agents = []
     base_url = 'https://webproxy.lumiproxy.com/request?area=KR&u=https://www.whatismybrowser.com/guides/the-latest-user-agent/{browser}'
 
     for browser in ('chrome', 'firefox', 'safari', 'edge'):
-        time.sleep(1)
-        response = requests.get(
-            base_url.format(browser = browser),
-            headers={'User-Agent': random.choice(get_saved_user_agents())},
-        )
-        if response.status_code >= 400:
-            print('error for {base_url}:')
-            print(response.text)
-            response.raise_for_status()
+        attempt = 0
+        while attempt < retries:
+            try:
+                time.sleep(1)
+                response = requests.get(
+                    base_url.format(browser=browser),
+                    headers={'User-Agent': random.choice(get_saved_user_agents())},
+                )
 
-        elems = html.fromstring(response.text).cssselect('td li span.code')
+                if response.status_code >= 400:
+                    print(f"Error for {base_url.format(browser=browser)}:")
+                    print(response.text)
+                    response.raise_for_status()
 
-        browser_uas = []
-        for elem in elems:
-            ua = elem.text_content().strip()
-            if not ua.startswith('Mozilla/5.0 ('):
-                continue
-            browser_uas.append(ua)
+                elems = html.fromstring(response.text).cssselect('td li span.code')
 
-        for ua in browser_uas:
-            os_type = ua[len('Mozilla/5.0 ('):ua.find(')')].lower()
-            os_fields = [p.strip() for p in os_type.split(';')]
+                browser_uas = []
+                for elem in elems:
+                    ua = elem.text_content().strip()
+                    if not ua.startswith('Mozilla/5.0 ('):
+                        continue
+                    browser_uas.append(ua)
 
-            if any(p.match(f) for p, f in product(
-                    _os_field_exclude_patterns, os_fields)):
-                continue
+                for ua in browser_uas:
+                    os_type = ua[len('Mozilla/5.0 ('):ua.find(')')].lower()
+                    os_fields = [p.strip() for p in os_type.split(';')]
 
-            if any(p.match(f) for p, f in product(
-                    _os_field_include_patterns, os_fields)):
-                user_agents.append(ua)
+                    if any(p.match(f) for p, f in product(
+                            _os_field_exclude_patterns, os_fields)):
+                        continue
+
+                    if any(p.match(f) for p, f in product(
+                            _os_field_include_patterns, os_fields)):
+                        user_agents.append(ua)
+
+                # Break the retry loop if the request was successful
+                break
+
+            except requests.RequestException as e:
+                attempt += 1
+                print(f"Attempt {attempt} failed for {browser}: {e}")
+                if attempt < retries:
+                    print(f"Retrying in {delay} seconds...")
+                    time.sleep(delay)
+                else:
+                    print(f"Failed to fetch data for {browser} after {retries} attempts.")
 
     return user_agents
 
