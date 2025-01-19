@@ -90,7 +90,8 @@ def get_latest_user_agents(retries=3, delay=2):
                     print(f"Retrying in {delay} seconds...")
                     time.sleep(delay)
                 else:
-                    print(f"Failed to fetch data for {browser} after {retries} attempts.")
+                    # Raise exception after all retries fail
+                    raise RuntimeError(f"Failed to fetch data for {browser} after {retries} attempts.") from e
 
     return user_agents
 
